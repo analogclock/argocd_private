@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: hello
+  name: hello-deployment
+  annotations:
+    link.argocd.argoproj.io/external-link: https://hub.docker.com/repository/docker/chauwei150/hello
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello
+  template:
+    metadata:
+      labels:
+        app: hello
+    spec:
+      imagePullSecrets:
+      - name: chauwei150
+      containers:
+      - name: hello-deployment
+        image: chauwei150/hello:v1
+        imagePullPolicy: Always
