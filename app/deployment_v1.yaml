@@ -20,5 +20,5 @@ spec:
       - name: chauwei150
       containers:
       - name: hello-deployment
-        image: chauwei150/hello:v1
+        image: chauwei150/hello:v2
         imagePullPolicy: Always
