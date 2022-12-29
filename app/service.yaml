@@ -8,7 +8,7 @@ spec:
   ports:
   - name: http
     nodePort: 31732
-    port: 81
+    port: 82
     protocol: TCP
     targetPort: 8080
   type: NodePort
