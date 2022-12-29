@@ -6,7 +6,9 @@ spec:
   selector:
     app: hello
   ports:
-  - protocol: "TCP"
+  - name: http
+    nodePort: 31732
     port: 80
-    targetPort: 8000
+    protocol: TCP
+    targetPort: 8080
   type: NodePort
