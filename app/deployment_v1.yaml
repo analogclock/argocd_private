@@ -17,8 +17,8 @@ spec:
         app: hello
     spec:
       imagePullSecrets:
-      - name: chauwei150
+      - name: regcred
       containers:
       - name: hello-deployment
-        image: chauwei150/hello:v2
+        image: gcr.io/spry-utility-373201/argo-test:v1 
         imagePullPolicy: Always
