@@ -7,7 +7,7 @@ metadata:
   annotations:
     link.argocd.argoproj.io/external-link: https://hub.docker.com/repository/docker/chauwei150/hello
 spec:
-  replicas: 1
+  replicas: 10
   selector:
     matchLabels:
       app: hello
