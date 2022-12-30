@@ -5,7 +5,7 @@ metadata:
     app: summer-trip
   name: summer-trip-deployment
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: summer-trip
