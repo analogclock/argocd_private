@@ -20,5 +20,5 @@ spec:
       - name: regcred
       containers:
       - name: hello-deployment
-        image: gcr.io/spry-utility-373201/argo-test:v1 
+        image: gcr.io/spry-utility-373201/hello:v1 
         imagePullPolicy: Always
