@@ -18,5 +18,5 @@ spec:
       - name: regcred
       containers:
       - name: summer-trip-deployment
-        image: gcr.io/spry-utility-373201/summer-trip:v1 
+        image: gcr.io/spry-utility-373201/summer-trip:v2
         imagePullPolicy: Always
