@@ -4,6 +4,9 @@ metadata:
   labels:
     app: summer-trip
   name: summer-trip-deployment
+  annotations:
+    link.argocd.argoproj.io/external-link: https://hub.docker.com/repository/docker/chauwei150/summer-trip
+spec:
 spec:
   replicas: 1
   selector:
@@ -18,5 +21,5 @@ spec:
       - name: regcred
       containers:
       - name: summer-trip-deployment
-        image: gcr.io/spry-utility-373201/summer-trip:v2
+        image: chauwei150/summer-trip:v1
         imagePullPolicy: Always
