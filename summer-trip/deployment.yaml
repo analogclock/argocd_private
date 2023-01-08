@@ -18,5 +18,5 @@ spec:
       - name: regcred
       containers:
       - name: summer-trip
-        image: 730118560661.dkr.ecr.us-east-1.amazonaws.com/argcd/summer-trip:v1
+        image: 730118560661.dkr.ecr.us-east-1.amazonaws.com/argcd:v1
         imagePullPolicy: Always
