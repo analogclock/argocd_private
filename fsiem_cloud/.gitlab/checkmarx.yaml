@@ -1,0 +1,72 @@
+# Download Checkmarx config file for gitlab
+include: 'https://raw.githubusercontent.com/checkmarx-ltd/cx-flow/develop/templates/gitlab/v3/Checkmarx.gitlab-ci.yml'
+
+# Do NOT run checkmarx on every MR commit. Only run it when user clicks a run button.
+checkmarx-scan-mr:
+  tags: [gitlab-runner-6c4c8855f7-2fmks]
+  # Don't break the build when the scan fails
+  allow_failure: true
+  needs: []
+  rules:
+    - when: manual
+
+# Do NOT run checkmarx on every commit to the main branch. Only run it when user clicks a run button.
+checkmarx-scan:
+  tags: [gitlab-runner-6c4c8855f7-2fmks]
+  allow_failure: true
+  needs: []
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: manual
+    - when: never
+
+# A job to run scheduled scan.
+# In gitlab, create a scheduled pipeline and
+# define SCHEDULED_CHECKMARX_SCAN variable.
+checkmarx-scan-schedule:
+  tags: [gitlab-runner-6c4c8855f7-2fmks]
+  stage: test
+  only:
+    variables:
+      - $SCHEDULED_CHECKMARX_SCAN
+  image:
+    name: checkmarx/${CHECKMARX_DOCKER_IMAGE}
+    entrypoint: ['']
+  variables:
+    CHECKMARX_INCREMENTAL: "false"
+  script:
+    - ${CX_FLOW_EXE}
+          --scan
+          --app="${CI_PROJECT_NAME}"
+          --namespace="${CI_PROJECT_NAMESPACE}"
+          --repo-name="${CI_PROJECT_NAME}"
+          --repo-url="${CI_REPOSITORY_URL}"
+          --cx-team="${CX_TEAM}"
+          --cx-project="${CX_PROJECT}"
+          --branch="${CI_COMMIT_BRANCH}"
+          --spring.profiles.active="${CX_FLOW_ENABLED_VULNERABILITY_SCANNERS}"
+          --f=.
+          ${PARAMS}
+
+variables:
+  # Software Composition Analysis scanning via Checkmarx
+  # To view the results, go to: https://sca.checkmarx.net/#/projects/
+  # If you don't have access, request access via OA > SAR > Infosec Applications Checkmarx
+  SCA_TENANT: "fortinet"
+  SCA_TEAM: "<PROVIDE VIA VARIABLES>"
+  SCA_USERNAME: "<PROVIDE VIA VARIABLES>"
+  SCA_PASSWORD: "<PROVIDE VIA VARIABLES>"
+  # Project access token. Only use `api` access, set validity to 3 months. Used to post comments on MR.
+  GITLAB_TOKEN: "<PROVIDE VIA VARIABLES>"
+  CX_PROJECT: "<PROVIDE VIA VARIABLES>"
+  CX_FLOW_ENABLED_VULNERABILITY_SCANNERS: "sast,sca"
+  CX_FLOW_EXE: "java -Dhttp.proxyHost=172.30.41.250 -Dhttp.proxyPort=3128 -jar /app/cx-flow.jar"
+  CX_FLOW_BUG_TRACKER: "NONE"
+
+  # SAST scanning via Checkmarx
+  # To view the results, go to: https://checkmarx.infosec.fortinet-us.com/cxwebclient/ProjectState.aspx
+  CHECKMARX_BASE_URL: "https://checkmarx.infosec.fortinet-us.com"
+  CHECKMARX_SCAN_PRESET: "ASA Premium"
+  CX_TEAM: "<PROVIDE VIA VARIABLES>"
+  CHECKMARX_USERNAME: "<PROVIDE VIA VARIABLES>"
+  CHECKMARX_PASSWORD: "<PROVIDE VIA VARIABLES>"

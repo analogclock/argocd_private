@@ -1,0 +1,33 @@
+version: "3.9"
+# Manually create default network to avoid issues with FortiClient VPN.
+# From: https://stackoverflow.com/a/50948930/706456
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.16.234.0/24
+          gateway: 172.16.234.1
+services:
+  portal_ui_build:
+    platform: linux/amd64
+    build:
+      context: ./
+      dockerfile: build.dockerfile
+      args:
+        # Assign the values of env variables to the args
+        # This is required for accessing env vars at build time
+        VERSION_MAJOR: $VERSION_MAJOR
+        VERSION_MINOR: $VERSION_MINOR
+        VERSION_PATCH: $VERSION_PATCH
+        VERSION_REVISION: $VERSION_REVISION
+        DEVOPS_BUILD_NUMBER: $DEVOPS_BUILD_NUMBER
+        DEVOPS_BUILD_TYPE: $DEVOPS_BUILD_TYPE
+        CI_ENVIRONMENT_NAME: $CI_ENVIRONMENT_NAME
+        CI_COMMIT_SHORT_SHA: $CI_COMMIT_SHORT_SHA
+        DOCKER_REGISTRY: ${DOCKER_REGISTRY_NEXUS_URL}
+        DOCKER_NODE_VERSION: ${DOCKER_NODE_VERSION}
+        NEXUS_NPM_PROXY: ${NEXUS_NPM_PROXY:-https://registry.npmjs.org/}
+        NEXUS_APK_PROXY: ${NEXUS_APK_PROXY:-https://dl-cdn.alpinelinux.org/alpine/v3.19/main}
+        NEXUS_APK_COMMUNITY_PROXY: ${NEXUS_APK_COMMUNITY_PROXY:-https://dl-cdn.alpinelinux.org/alpine/v3.19/community}
+    image: ${DOCKER_REGISTRY_NEXUS_URL}portal_ui_build
+    container_name: portal_ui_build

@@ -1,0 +1,19 @@
+module "vpc" {
+  source  = "dops-jfrog.fortinet-us.com/terraform-virtual__terraform-aws-modules/vpc/aws"
+  version = "~> 5.0.0"
+}
+
+module "ecs" {
+  source  = "dops-jfrog.fortinet-us.com/terraform-virtual__terraform-aws-modules/ecs/aws"
+  version = "~> 5.2.0"
+}
+
+module "eventbridge" {
+  source  = "dops-jfrog.fortinet-us.com/terraform-virtual__terraform-aws-modules/eventbridge/aws"
+  version = "~> 2.3.0"
+}
+
+module "template_files" {
+  source  = "dops-jfrog.fortinet-us.com/terraform-virtual__hashicorp/dir/template"
+  version = "~> 1.0.0"
+}

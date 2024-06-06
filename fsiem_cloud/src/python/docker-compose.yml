@@ -1,0 +1,416 @@
+version: "3.9"
+
+# Manually create default network to avoid issues with FortiClient VPN.
+# From: https://stackoverflow.com/a/50948930/706456
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.16.238.0/24
+          gateway: 172.16.238.1
+
+services:
+
+  #
+  # fsiem_api_client
+  #
+  fsiem_api_client:
+    platform: linux/amd64
+    build:
+      context: ./
+      dockerfile: fsiem_api_client/Dockerfile
+      args:
+        # Assign the values of env variables to the args
+        # This is required for accessing env vars at build time
+        VERSION_MAJOR: $VERSION_MAJOR
+        VERSION_MINOR: $VERSION_MINOR
+        VERSION_PATCH: $VERSION_PATCH
+        VERSION_REVISION: $VERSION_REVISION
+        DEVOPS_BUILD_NUMBER: $DEVOPS_BUILD_NUMBER
+        DEVOPS_BUILD_TYPE: $DEVOPS_BUILD_TYPE
+        DOCKER_REGISTRY: ${DOCKER_REGISTRY_NEXUS_URL}
+        DOCKER_PYTHON_VERSION: ${DOCKER_PYTHON_VERSION}
+        NEXUS_PYPI_URL: ${NEXUS_PYPI_URL:-https://pypi.org/simple}
+        NEXUS_APK_PROXY: ${NEXUS_APK_PROXY:-https://dl-cdn.alpinelinux.org/alpine/v3.19/main}
+        NEXUS_APK_COMMUNITY_PROXY: ${NEXUS_APK_COMMUNITY_PROXY:-https://dl-cdn.alpinelinux.org/alpine/v3.19/community}
+        BUILD_HTTP_PROXY: ${BUILD_HTTP_PROXY:-}
+    image: ${DOCKER_REGISTRY_NEXUS_URL}fsiem_api_client
+    container_name: fsiem_api_client
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+
+  #
+  # fsiem-backup
+  #
+  fsiem-backup:
+    platform: linux/amd64
+    build:
+      context: ./
+      dockerfile: fsiem_backup/Dockerfile
+      args:
+        # Assign the values of env variables to the args
+        # This is required for accessing env vars at build time
+        DOCKER_REGISTRY: ${DOCKER_REGISTRY_NEXUS_URL}
+        DOCKER_PYTHON_VERSION: ${DOCKER_PYTHON_VERSION}
+        NEXUS_PYPI_URL: ${NEXUS_PYPI_URL:-https://pypi.org/simple}
+    image: ${CONTAINER_IMAGE_NAME:-fsiem-backup}
+    container_name: fsiem-backup
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+
+  #
+  # fsiem-daily-job
+  #
+  fsiem-daily-job:
+    platform: linux/amd64
+    build:
+      context: ./
+      dockerfile: fsiem_daily_job/Dockerfile
+      args:
+        # Assign the values of env variables to the args
+        # This is required for accessing env vars at build time
+        DOCKER_REGISTRY: ${DOCKER_REGISTRY_NEXUS_URL}
+        DOCKER_PYTHON_VERSION: ${DOCKER_PYTHON_VERSION}
+        NEXUS_PYPI_URL: ${NEXUS_PYPI_URL:-https://pypi.org/simple}
+    image: ${CONTAINER_IMAGE_NAME:-fsiem-daily-job}
+    container_name: fsiem-daily-job
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+
+  #
+  # fsiem-setup
+  #
+  fsiem-setup:
+    platform: linux/amd64
+    build:
+      context: ./
+      dockerfile: fsiem_setup/Dockerfile
+      args:
+        # Assign the values of env variables to the args
+        # This is required for accessing env vars at build time
+        DOCKER_REGISTRY: ${DOCKER_REGISTRY_NEXUS_URL}
+        DOCKER_PYTHON_VERSION: ${DOCKER_PYTHON_VERSION}
+        NEXUS_PYPI_URL: ${NEXUS_PYPI_URL:-https://pypi.org/simple}
+    image: ${CONTAINER_IMAGE_NAME:-fsiem-setup}
+    container_name: fsiem-setup
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+
+  #
+  # fsiem-storage-enforcer
+  #
+  fsiem-storage-enforcer:
+    platform: linux/amd64
+    build:
+      context: ./
+      dockerfile: fsiem_storage_enforcer/Dockerfile
+      args:
+        # Assign the values of env variables to the args
+        # This is required for accessing env vars at build time
+        DOCKER_REGISTRY: ${DOCKER_REGISTRY_NEXUS_URL}
+        DOCKER_PYTHON_VERSION: ${DOCKER_PYTHON_VERSION}
+        NEXUS_PYPI_URL: ${NEXUS_PYPI_URL:-https://pypi.org/simple}
+    image: ${CONTAINER_IMAGE_NAME:-fsiem-storage-enforcer}
+    container_name: fsiem-storage-enforcer
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+
+  #
+  # fsiem-terraform-updater
+  #
+  fsiem-terraform-updater:
+    platform: linux/amd64
+    build:
+      context: ./
+      dockerfile: fsiem_terraform_updater/Dockerfile
+      args:
+        # Assign the values of env variables to the args
+        # This is required for accessing env vars at build time
+        DOCKER_REGISTRY: ${DOCKER_REGISTRY_NEXUS_URL}
+        DOCKER_PYTHON_VERSION: ${DOCKER_PYTHON_VERSION}
+        NEXUS_PYPI_URL: ${NEXUS_PYPI_URL:-https://pypi.org/simple}
+    image: ${CONTAINER_IMAGE_NAME:-fsiem-terraform-updater}
+    container_name: fsiem-terraform-updater
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+
+  #
+  # fsiem-scheduled-upgrade
+  #
+  fsiem-scheduled-upgrade:
+    platform: linux/amd64
+    build:
+      context: ./
+      dockerfile: fsiem_scheduled_upgrade/Dockerfile
+      args:
+        # Assign the values of env variables to the args
+        # This is required for accessing env vars at build time
+        DOCKER_REGISTRY: ${DOCKER_REGISTRY_NEXUS_URL}
+        DOCKER_PYTHON_VERSION: ${DOCKER_PYTHON_VERSION}
+        NEXUS_PYPI_URL: ${NEXUS_PYPI_URL:-https://pypi.org/simple}
+    image: ${CONTAINER_IMAGE_NAME:-fsiem-scheduled-upgrade}
+    container_name: fsiem-scheduled-upgrade
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+
+  #
+  # fsiem-license
+  #
+  fsiem-license:
+    platform: linux/amd64
+    build:
+      context: ./
+      dockerfile: fsiem_license/Dockerfile
+      args:
+        # Assign the values of env variables to the args
+        # This is required for accessing env vars at build time
+        DOCKER_REGISTRY: ${DOCKER_REGISTRY_NEXUS_URL}
+        DOCKER_PYTHON_VERSION: ${DOCKER_PYTHON_VERSION}
+        NEXUS_PYPI_URL: ${NEXUS_PYPI_URL:-https://pypi.org/simple}
+    image: ${CONTAINER_IMAGE_NAME:-fsiem-license}
+    container_name: fsiem-license
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+
+  #
+  # fsiem-metrics
+  #
+  fsiem-metrics:
+    platform: linux/amd64
+    build:
+      context: ./
+      dockerfile: fsiem_metrics/Dockerfile
+      args:
+        # Assign the values of env variables to the args
+        # This is required for accessing env vars at build time
+        DOCKER_REGISTRY: ${DOCKER_REGISTRY_NEXUS_URL}
+        DOCKER_PYTHON_VERSION: ${DOCKER_PYTHON_VERSION}
+        NEXUS_PYPI_URL: ${NEXUS_PYPI_URL:-https://pypi.org/simple}
+    image: ${CONTAINER_IMAGE_NAME:-fsiem-metrics}
+    container_name: fsiem-metrics
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+
+  #
+  # fsiem-resource-calc
+  #
+  fsiem-resource-calc:
+    platform: linux/amd64
+    build:
+      context: ./
+      dockerfile: fsiem_resource_calc/Dockerfile
+      args:
+        # Assign the values of env variables to the args
+        # This is required for accessing env vars at build time
+        DOCKER_REGISTRY: ${DOCKER_REGISTRY_NEXUS_URL}
+        DOCKER_UBUNTU_VERSION: ${DOCKER_UBUNTU_VERSION}
+        NEXUS_PYPI_URL: ${NEXUS_PYPI_URL:-https://pypi.org/simple}
+        NEXUS_APT_PROXY: ${NEXUS_APT_PROXY:-http://archive.ubuntu.com/ubuntu/}
+        NEXUS_APT_SECURITY_PROXY: ${NEXUS_APT_SECURITY_PROXY:-http://security.ubuntu.com/ubuntu/}
+    image: ${CONTAINER_IMAGE_NAME:-fsiem-resource-calc}
+    container_name: fsiem-resource-calc
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    # We need to write to the file system, build generates a binary file
+    # The output binary file is then copied and exported into the fsiem_deploy
+    # container.
+    read_only: false
+
+  #
+  # lambda-notification-email
+  #
+  lambda-notification-email:
+    platform: linux/amd64
+    build:
+      context: ./
+      dockerfile: lambda_notification_email/Dockerfile
+      args:
+        # Assign the values of env variables to the args
+        # This is required for accessing env vars at build time
+        DOCKER_REGISTRY: ${DOCKER_REGISTRY_NEXUS_URL}
+        DOCKER_PYTHON_VERSION: ${DOCKER_PYTHON_VERSION}
+        NEXUS_PYPI_URL: ${NEXUS_PYPI_URL:-https://pypi.org/simple}
+        NEXUS_APK_PROXY: ${NEXUS_APK_PROXY:-https://dl-cdn.alpinelinux.org/alpine/v3.19/main}
+        NEXUS_APK_COMMUNITY_PROXY: ${NEXUS_APK_COMMUNITY_PROXY:-https://dl-cdn.alpinelinux.org/alpine/v3.19/community}
+    image: ${CONTAINER_IMAGE_NAME:-lambda-notification-email}
+    container_name: lambda-notification-email
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+
+  #
+  # lambda-monitor-cleanup
+  #
+  lambda-monitor-cleanup:
+    platform: linux/amd64
+    build:
+      context: ./
+      dockerfile: lambda_monitor_cleanup/Dockerfile
+      args:
+        # Assign the values of env variables to the args
+        # This is required for accessing env vars at build time
+        DOCKER_REGISTRY: ${DOCKER_REGISTRY_NEXUS_URL}
+        DOCKER_PYTHON_VERSION: ${DOCKER_PYTHON_VERSION}
+        NEXUS_PYPI_URL: ${NEXUS_PYPI_URL:-https://pypi.org/simple}
+        NEXUS_APK_PROXY: ${NEXUS_APK_PROXY:-https://dl-cdn.alpinelinux.org/alpine/v3.19/main}
+        NEXUS_APK_COMMUNITY_PROXY: ${NEXUS_APK_COMMUNITY_PROXY:-https://dl-cdn.alpinelinux.org/alpine/v3.19/community}
+    image: ${CONTAINER_IMAGE_NAME:-lambda-monitor-cleanup}
+    container_name: lambda-monitor-cleanup
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+
+  #
+  # fsiem-expiry-notification
+  #
+  fsiem-expiry-notification:
+    platform: linux/amd64
+    build:
+      context: ./
+      dockerfile: fsiem_expiry_notification/Dockerfile
+      args:
+        # Assign the values of env variables to the args
+        # This is required for accessing env vars at build time
+        DOCKER_REGISTRY: ${DOCKER_REGISTRY_NEXUS_URL}
+        DOCKER_PYTHON_VERSION: ${DOCKER_PYTHON_VERSION}
+        NEXUS_PYPI_URL: ${NEXUS_PYPI_URL:-https://pypi.org/simple}
+        NEXUS_APT_PROXY: ${NEXUS_APT_PROXY:-http://archive.ubuntu.com/ubuntu/}
+        NEXUS_APT_SECURITY_PROXY: ${NEXUS_APT_SECURITY_PROXY:-http://security.ubuntu.com/ubuntu/}
+    image: ${CONTAINER_IMAGE_NAME:-fsiem-expiry-notification}
+    container_name: fsiem-expiry-notification
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+
+  #
+  # lambda-ses-reject
+  #
+  lambda-ses-reject:
+    platform: linux/amd64
+    build:
+      context: ./
+      dockerfile: lambda_ses_reject/Dockerfile
+      args:
+        # Assign the values of env variables to the args
+        # This is required for accessing env vars at build time
+        DOCKER_REGISTRY: ${DOCKER_REGISTRY_NEXUS_URL}
+        DOCKER_PYTHON_VERSION: ${DOCKER_PYTHON_VERSION}
+        NEXUS_PYPI_URL: ${NEXUS_PYPI_URL:-https://pypi.org/simple}
+        NEXUS_APT_PROXY: ${NEXUS_APT_PROXY:-http://archive.ubuntu.com/ubuntu/}
+        NEXUS_APT_SECURITY_PROXY: ${NEXUS_APT_SECURITY_PROXY:-http://security.ubuntu.com/ubuntu/}
+    image: ${CONTAINER_IMAGE_NAME:-lambda-ses-reject}
+    container_name: lambda-ses-reject
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+
+  #
+  # lambda-ssm-automation
+  #
+  lambda-ssm-automation:
+    platform: linux/amd64
+    build:
+      context: ./
+      dockerfile: lambda_ssm_automation/Dockerfile
+      args:
+        # Assign the values of env variables to the args
+        # This is required for accessing env vars at build time
+        DOCKER_REGISTRY: ${DOCKER_REGISTRY_NEXUS_URL}
+        DOCKER_PYTHON_VERSION: ${DOCKER_PYTHON_VERSION}
+        NEXUS_PYPI_URL: ${NEXUS_PYPI_URL:-https://pypi.org/simple}
+    image: ${CONTAINER_IMAGE_NAME:-lambda-ssm-automation}
+    container_name: lambda-ssm-automation
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+
+  #
+  # fsiem-monitor
+  #
+  fsiem-monitor:
+    platform: linux/amd64
+    build:
+      context: ./
+      dockerfile: fsiem_monitor/Dockerfile
+      args:
+        # Assign the values of env variables to the args
+        # This is required for accessing env vars at build time
+        DOCKER_REGISTRY: ${DOCKER_REGISTRY_NEXUS_URL}
+        DOCKER_UBUNTU_VERSION: ${DOCKER_UBUNTU_VERSION}
+        NEXUS_PYPI_URL: ${NEXUS_PYPI_URL:-https://pypi.org/simple}
+        NEXUS_APT_PROXY: ${NEXUS_APT_PROXY:-http://archive.ubuntu.com/ubuntu/}
+        NEXUS_APT_SECURITY_PROXY: ${NEXUS_APT_SECURITY_PROXY:-http://security.ubuntu.com/ubuntu/}
+        NEXUS_DOCKER_APT_PROXY: ${NEXUS_DOCKER_APT_PROXY:-https://download.docker.com/linux/ubuntu}
+        BUILD_HTTP_PROXY: ${BUILD_HTTP_PROXY:-}
+    image: ${CONTAINER_IMAGE_NAME:-fsiem-monitor}
+    container_name: fsiem-monitor
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+
+  #
+  # fsiem-worker-lifecycle
+  #
+  fsiem-worker-lifecycle:
+    platform: linux/amd64
+    build:
+      context: ./
+      dockerfile: fsiem_worker_lifecycle/Dockerfile
+      args:
+        # Assign the values of env variables to the args
+        # This is required for accessing env vars at build time
+        DOCKER_REGISTRY: ${DOCKER_REGISTRY_NEXUS_URL}
+        DOCKER_PYTHON_VERSION: ${DOCKER_PYTHON_VERSION}
+        NEXUS_PYPI_URL: ${NEXUS_PYPI_URL:-https://pypi.org/simple}
+        NEXUS_APT_PROXY: ${NEXUS_APT_PROXY:-http://archive.ubuntu.com/ubuntu/}
+        NEXUS_APT_SECURITY_PROXY: ${NEXUS_APT_SECURITY_PROXY:-http://security.ubuntu.com/ubuntu/}
+        NEXUS_DOCKER_APT_PROXY: ${NEXUS_DOCKER_APT_PROXY:-https://download.docker.com/linux/ubuntu}
+        BUILD_HTTP_PROXY: ${BUILD_HTTP_PROXY:-}
+    image: ${CONTAINER_IMAGE_NAME:-fsiem-worker-lifecycle}
+    container_name: fsiem-worker-lifecycle
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true

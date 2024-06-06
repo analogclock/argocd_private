@@ -1,0 +1,192 @@
+<div *ngIf="isAuthenticated && (userService.accountSelected$ | async) as account; else dummy_menu">
+    <div>
+        <img class="logo" alt="forti-cloud-logo"
+            [src]="sanitizer.bypassSecurityTrustUrl('data:image/svg+xml;base64,' + account.logo)">
+        <div class="menu-container services" #services (click)="forceServices()">
+            <i class="service"></i> Services<i class="arrow-down"></i>
+            <div [hidden]="open !== services" class="dropdown">
+                <div class="left">
+                    <div *ngIf="account.serviceMenu[0] as menuHeader">
+                        <div class="menu-header">{{ menuHeader.displayName }}</div>
+                        <form method="POST" (ngSubmit)="onSubmit($event)" class="menu-body bi-column">
+                            <button *ngFor="let portalMenuItem of menuHeader.items"
+                                (click)="selectPortal(portalMenuItem, $event)" class="service-menu-button"
+                                [class.disabled-menu-button]="portalMenuItem.visibility === 'ShowDisabled'">
+                                <img class="image-container"
+                                    [src]="sanitizer.bypassSecurityTrustUrl('data:image/svg+xml;base64,' + portalMenuItem.imageContent)">
+                                <span>{{ portalMenuItem.displayName }}</span>
+                            </button>
+                            <input type="hidden" name="h_key" [value]="fortifiedHKeyData">
+                        </form>
+                    </div>
+                    <div *ngIf="account.serviceMenu[1] as menuHeader">
+                        <div class="menu-header">{{ menuHeader.displayName }}</div>
+                        <form method="POST" (ngSubmit)="onSubmit($event)" class="menu-body bi-column">
+                            <button *ngFor="let portalMenuItem of menuHeader.items"
+                                (click)="selectPortal(portalMenuItem, $event)" class="service-menu-button"
+                                [class.disabled-menu-button]="portalMenuItem.visibility === 'ShowDisabled'">
+                                <img class="image-container"
+                                    [src]="sanitizer.bypassSecurityTrustUrl('data:image/svg+xml;base64,' + portalMenuItem.imageContent)">
+                                <span>{{ portalMenuItem.displayName }}</span>
+                            </button>
+                            <input type="hidden" name="h_key" [value]="fortifiedHKeyData">
+                        </form>
+                    </div>
+                </div>
+                <div class="right">
+                    <div *ngIf="account.serviceMenu[2] as menuHeader">
+                        <div class="menu-header">{{ menuHeader.displayName }}</div>
+                        <form method="POST" (ngSubmit)="onSubmit($event)" class="menu-body bi-column">
+                            <button *ngFor="let portalMenuItem of menuHeader.items"
+                                (click)="selectPortal(portalMenuItem, $event)" class="service-menu-button"
+                                [class.disabled-menu-button]="portalMenuItem.visibility === 'ShowDisabled'">
+                                <img class="image-container"
+                                    [src]="sanitizer.bypassSecurityTrustUrl('data:image/svg+xml;base64,' + portalMenuItem.imageContent)">
+                                <span>{{ portalMenuItem.displayName }}</span>
+                            </button>
+                            <input type="hidden" name="h_key" [value]="fortifiedHKeyData">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="menu-container support" #support (click)="forceSupport()">
+            Support<i class="arrow-down"></i>
+            <div [hidden]="open !== support" class="dropdown">
+                <div class="left">
+                    <div *ngIf="account.supportMenu[0] as menuHeader">
+                        <div class="menu-header">
+                            <form method="POST" (ngSubmit)="onSubmit($event)">
+                                <button (click)="selectedPortal = menuHeader" class="support-menu-header-button">
+                                    <span>{{  menuHeader.displayName }}</span>
+                                </button>
+                                <input type="hidden" name="h_key" [value]="fortifiedHKeyData">
+                            </form>
+                        </div>
+                        <form method="POST" (ngSubmit)="onSubmit($event)" class="menu-body mono-column">
+                            <button *ngFor="let portalMenuItem of menuHeader.items"
+                                (click)="selectedPortal = portalMenuItem" class="support-menu-button"
+                                [class.disabled-menu-button]="portalMenuItem.visibility === 'ShowDisabled'">
+                                <span>{{ portalMenuItem.displayName }}</span>
+                            </button>
+                            <input type="hidden" name="h_key" [value]="fortifiedHKeyData">
+                        </form>
+                    </div>
+                </div>
+                <div class="right">
+                    <div *ngIf="account.supportMenu[1] as menuHeader">
+                        <div class="menu-header">
+                            <form method="POST" (ngSubmit)="onSubmit($event)">
+                                <button (click)="selectedPortal = menuHeader" class="support-menu-header-button">
+                                    <span>{{  menuHeader.displayName }}</span>
+                                </button>
+                                <input type="hidden" name="h_key" [value]="fortifiedHKeyData">
+                            </form>
+                        </div>
+                        <form method="POST" (ngSubmit)="onSubmit($event)" class="menu-body bi-column">
+                            <button *ngFor="let portalMenuItem of menuHeader.items"
+                                (click)="selectedPortal = portalMenuItem" class="support-menu-button"
+                                [class.disabled-menu-button]="portalMenuItem.visibility === 'ShowDisabled'">
+                                <span>{{ portalMenuItem.displayName }}</span>
+                            </button>
+                            <input type="hidden" name="h_key" [value]="fortifiedHKeyData">
+                        </form>
+                    </div>
+                </div>
+                <div class="right">
+                    <div *ngIf="account.supportMenu[2] as menuHeader">
+                        <div class="menu-header">
+                            <form method="POST" (ngSubmit)="onSubmit($event)">
+                                <button (click)="selectedPortal = menuHeader" class="support-menu-header-button">
+                                    <span>{{  menuHeader.displayName }}</span>
+                                </button>
+                                <input type="hidden" name="h_key" [value]="fortifiedHKeyData">
+                            </form>
+                        </div>
+                        <form method="POST" (ngSubmit)="onSubmit($event)" class="menu-body bi-column">
+                            <button *ngFor="let portalMenuItem of menuHeader.items"
+                                (click)="selectedPortal = portalMenuItem" class="support-menu-button"
+                                [class.disabled-menu-button]="portalMenuItem.visibility === 'ShowDisabled'">
+                                <span>{{ portalMenuItem.displayName }}</span>
+                            </button>
+                            <input type="hidden" name="h_key" [value]="fortifiedHKeyData">
+                        </form>
+                    </div>
+                    <div *ngIf="account.supportMenu[3] as menuHeader">
+                        <div class="menu-header">
+                            <form method="POST" (ngSubmit)="onSubmit($event)">
+                                <button (click)="selectedPortal = menuHeader" class="support-menu-header-button">
+                                    <span>{{  menuHeader.displayName }}</span>
+                                </button>
+                                <input type="hidden" name="h_key" [value]="fortifiedHKeyData">
+                            </form>
+                        </div>
+                        <form method="POST" (ngSubmit)="onSubmit($event)" class="menu-body bi-column">
+                            <button *ngFor="let portalMenuItem of menuHeader.items"
+                                (click)="selectedPortal = portalMenuItem" class="support-menu-button"
+                                [class.disabled-menu-button]="portalMenuItem.visibility === 'ShowDisabled'">
+                                <span>{{ portalMenuItem.displayName }}</span>
+                            </button>
+                            <input type="hidden" name="h_key" [value]="fortifiedHKeyData">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="menu-container user" #user (click)="forceUserDropdown()">
+        {{ account.details.displayEmail }} <i class="arrow-down"></i>
+        <div [hidden]="open !== user" class="dropdown">
+            <div class="account-info">
+                <div id="user-information">
+                    <div class="user-info-item">
+                        <span class="field">Account</span>
+                        <span class="value">{{ account.details.accountId }}/{{ account.details.accountCompany }}</span>
+                    </div>
+                    <div class="user-info-item">
+                        <span class="field">Username</span>
+                        <span class="value">{{ account.details.displayEmail }}</span>
+                    </div>
+                </div>
+                <div class="user-menu">
+                    <form method="POST" (ngSubmit)="onSubmit($event)" class="menu-body mono-column">
+                        <div>
+                            <button *ngFor="let userMenuItem of account.userMenu"
+                                (click)="selectedPortal = userMenuItem" class="user-menu-button"
+                                [class.disabled-menu-button]="userMenuItem.visibility === 'ShowDisabled'">
+                                <img class="image-container"
+                                    [src]="sanitizer.bypassSecurityTrustUrl('data:image/svg+xml;base64,' + userMenuItem.imageContent)">
+                                <span>{{ userMenuItem.displayName }}</span>
+                            </button>
+                        </div>
+                        <input type="hidden" name="h_key" [value]="fortifiedHKeyData">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<ng-template #dummy_menu>
+    <div>
+        <div>
+            <img src="assets/logos/forticloud-topbar-icon-v4.svg" class="logo" alt="forti-cloud-logo">
+        </div>
+        <div class="menu-container user" #user (click)="forceUserDropdown()">
+            {{userId}} <i class="arrow-down"></i>
+            <div [hidden]="open !== user" class="dropdown default">
+                <form method="POST" (ngSubmit)="onSubmit($event)" class="menu-body mono-column">
+                    <div>
+                        <button (click)="defaultLogout()" class="user-menu-button">
+                            <img class="image-container"
+                                src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDI0LjAuMSwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IgoJIHZpZXdCb3g9IjAgMCAzMiAzMiIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMzIgMzI7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPHRpdGxlPmNoZWNrRW50PC90aXRsZT4KPGc+Cgk8cGF0aCBkPSJNMjMuMiw3LjRjLTAuOC0wLjYtMS45LTAuNC0yLjUsMC40Yy0wLjYsMC44LTAuNCwxLjksMC40LDIuNWMyLjMsMS43LDMuNiw0LjMsMy42LDcuMWMwLDQuOS00LDguOC04LjgsOC44CgkJYy00LjksMC04LjgtNC04LjgtOC44YzAtMi44LDEuNC01LjUsMy42LTcuMWMwLjgtMC42LDEtMS43LDAuNC0yLjVjLTAuNi0wLjgtMS43LTEtMi41LTAuNGMtMy4yLDIuMy01LjEsNi4xLTUuMSwxMAoJCWMwLDYuOSw1LjYsMTIuNSwxMi41LDEyLjVjNi45LDAsMTIuNS01LjYsMTIuNS0xMi41QzI4LjMsMTMuNSwyNi40LDkuOCwyMy4yLDcuNCIvPgoJPHBhdGggZD0iTTE1LjksMTUuMmMxLDAsMS45LTAuOCwxLjktMS45VjMuN2MwLTEtMC44LTEuOS0xLjktMS45Yy0xLDAtMS45LDAuOC0xLjksMS45djkuNkMxNCwxNC40LDE0LjksMTUuMiwxNS45LDE1LjIiLz4KPC9nPgo8L3N2Zz4K">
+                            <span>Logout</span>
+                        </button>
+                    </div>
+                    <input type="hidden" name="h_key" [value]="fortifiedHKeyData">
+                </form>
+            </div>
+        </div>
+    </div>
+</ng-template>

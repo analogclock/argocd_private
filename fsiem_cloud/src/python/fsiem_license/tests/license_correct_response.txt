@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"><head id="j_idt2">
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+        <title>Successful Registration</title>
+        <link rel="shortcut icon" href="favicon.ico" />
+        <link href="css/main.css" rel="stylesheet" type="text/css" />
+        <script language="javascript" type="text/javascript">//<![CDATA[
+            window.onload = function() {
+                setInterval("countDown()", 1000);
+            }
+            var timeout = 1;
+            function countDown() {
+                if (timeout <= 0) {
+                    window.onload = null;
+                    document.getElementById("initMsg").style.display='none';
+                    document.getElementById("forwMsg").style.display='block';
+                } else {
+                    timeout = timeout - 1;
+                }
+            }
+            // ]]>
+        </script>
+        </head>
+    <body background="images/bg.png" bgcolor="#eeeeee">
+        <div id="accelBox">
+            <div class="logoBox" style="width: 407px;">
+                <img src="images/login.png" />
+            </div>
+
+            <div id="loginBox">
+                <div class="loginForm">
+                    <div class="regSuccess">
+                        <div id="formTitle">You have successfully registered your virtual appliance.</div><br />
+                        <div id="initMsg" style="display:block">
+                            System is initializing .... Please wait few moments.<div id="clk"></div>
+                        </div>
+                        <div id="forwMsg" style="display:none">
+                            Click <a href="login-html.jsf">here</a> to log in.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

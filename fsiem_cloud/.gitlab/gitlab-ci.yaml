@@ -1,0 +1,124 @@
+#
+# Gitlab CI build configuration
+#
+
+# Include SCA and SAST scanner
+include: ".gitlab/checkmarx.yaml"
+
+image: dops-jfrog.fortinet-us.com/docker-virtual/ubuntu:latest
+
+stages: [build, test, deploy]
+
+#
+# Jobs for a "build" stage
+#
+build:
+  stage: build
+  tags: [cicd] # cicd tag links with a native bash runner, so not docker-in-a-docker
+  needs: []
+  script: |
+    # For new build machines, you must run this script once to configure offline builds
+    # sudo ./src/devops/docker/configure.sh
+    # Note: sudo -E is important, without -E env vars aren't passed into the script
+    export CI_ENVIRONMENT_NAME=dev
+    sudo -E ./build/ci-wrapper.sh
+  only: [merge_request]
+  artifacts:
+    paths:
+      - src/portal/api/artifacts/
+      - src/portal/ui/artifacts/
+      - src/terraform/artifacts/
+      - src/python/artifacts/
+      - src/python/lambda_layer/artifacts/
+    expire_in: 2 week
+    when: always
+
+#
+# Jobs for a "deploy" stage
+#
+deploy:dev:
+  stage: deploy
+  tags: [cicd]
+  needs: ["build"]
+  script: |
+    # Note: sudo -E is important, without -E env vars aren't passed into the script
+    export CI_ENVIRONMENT_NAME=dev
+    sudo -E ./build/ci-wrapper.sh deploy
+  environment:
+    name: dev
+    url: https://fortisiem-dev.forticloud.com/
+  rules:
+    # Only run as part of merge train, basically a last step before merging to main
+    # Possible options: "detached" (not yet merged), "merged_result" (has been merged)
+    # "merge_train" (run only as part of a merge train)
+    - if: '$CI_MERGE_REQUEST_EVENT_TYPE == "merge_train"'
+  artifacts:
+    paths:
+      - src/terraform/artifacts/
+    expire_in: 2 week
+    when: always
+
+deploy:playground:
+  stage: deploy
+  tags: [cicd]
+  needs: []
+  allow_failure: true
+  script: |
+    # Note: sudo -E is important, without -E env vars aren't passed into the script
+    export CI_ENVIRONMENT_NAME=playground
+    # we must build first
+    sudo -E ./build/ci-wrapper.sh
+    sudo -E ./build/ci-wrapper.sh deploy
+  environment:
+    name: playground
+    url: https://fortisiem-playground.forticloud.com/
+  rules:
+    # Do not run when we are in "merge_train"
+    # but allow manual execution where applicable
+    - if: '$CI_MERGE_REQUEST_EVENT_TYPE == "merge_train"'
+      when: never
+    - when: manual
+  artifacts:
+    paths:
+      - src/terraform/artifacts/
+    expire_in: 2 week
+    when: always
+
+# Variables should be defined in the end. Because the template is evaluated before
+# the job configuration, the last mention of the variable takes precedence.
+variables:
+  # Revision is set by gitlab job id
+  VERSION_REVISION: "$CI_JOB_ID"
+  # AWS
+  AWS_ACCESS_KEY_ID: "<provided at build time as a variable>"
+  AWS_SECRET_ACCESS_KEY: "<provided at build time as a variable>"
+  AWS_DEFAULT_REGION: "us-east-1"
+  # Nexus and proxies for offline builds. Note the "/" is important at the end
+  DOCKER_REGISTRY_NEXUS_URL: "dops-jfrog.fortinet-us.com/docker-virtual/"
+  # SECURE_ANALYZERS_PREFIX: "dops-nexus.fortinet-us.com:8089/"
+  NEXUS_NUGET_PROXY: "https://dops-jfrog.fortinet-us.com/artifactory/api/nuget/v3/nuget-group/index.json"
+  NEXUS_NPM_PROXY: "https://dops-jfrog.fortinet-us.com/artifactory/api/npm/npm-grp/"
+  NEXUS_PYPI_URL: "https://dops-jfrog.fortinet-us.com/artifactory/api/pypi/pypi-all/simple"
+  NEXUS_APT_PROXY: "https://dops-jfrog.fortinet-us.com/artifactory/apt-remote"
+  NEXUS_APT_SECURITY_PROXY: "https://dops-jfrog.fortinet-us.com/artifactory/apt-remote"
+  NEXUS_DOCKER_APT_PROXY: "https://dops-jfrog.fortinet-us.com/artifactory/apt-docker-remote"
+  NEXUS_APK_PROXY: "https://dops-jfrog.fortinet-us.com/artifactory/alpine-remote/v3.19/main"
+  NEXUS_APK_COMMUNITY_PROXY: "https://dops-jfrog.fortinet-us.com/artifactory/alpine-remote/v3.19/community"
+  # [DH] Commenting this whilst DOPS investigate an issue with jfrog and terraform registries
+  # NEXUS_TERRAFORM_PROXY: "https://dops-jfrog.fortinet-us.com/artifactory/api/terraform/terraform-virtual/providers/"
+  NEXUS_AWS_PROXY: "https://dops-jfrog.fortinet-us.com/artifactory/raw-virtual-all"
+  NEXUS_HASHICORP_PROXY: "https://dops-jfrog.fortinet-us.com/artifactory/raw-virtual-all"
+  NEXUS_GITHUB_PROXY: "https://dops-jfrog.fortinet-us.com/artifactory/raw-virtual-all"
+  BUILD_HTTP_PROXY: "http://172.30.41.250:3128"
+
+  # Checkmarx SCA
+  SCA_TEAM: "/CxServer/FortiSIEM-Cloud"
+  CX_PROJECT: "FortiSIEM_Cloud"
+  SCA_USERNAME: "fortisiem_cloud_devops"
+  SCA_PASSWORD: "<PROVIDE VIA VARIABLES>"
+  GITLAB_TOKEN: "<PROVIDE VIA VARIABLES>"
+
+  # Checkmarx SAST
+  CX_TEAM: "/CxServer/SP/Company/FortiSIEM-Cloud"
+  CHECKMARX_USERNAME: "fortisiem_cloud_devops"
+  CHECKMARX_PASSWORD: "<PROVIDE VIA VARIABLES>"

@@ -1,0 +1,77 @@
+description: |-
+  Add collectors to the fortisiem super and provision collectors
+schemaVersion: "0.3"
+assumeRole: "${assume_role}"
+parameters:
+  SerialNumber:
+    type: String
+    description: serial number of the collector
+  SuperUrl:
+    type: String
+    description: url of the super for the fsiem stack used for benchmarking
+    default: "https://FSMCLD<id>.<environment>.fortisiem.cloud"
+  User:
+    type: String
+    description: user id to login to super
+  Password:
+    type: String
+    description: password
+  OrgName:
+    type: String
+    description: organization to be added to super
+  OrgUser:
+    type: String
+    description: organization user to be added to the super
+  CollectorName:
+    type: String
+    description: collector names to be registered to the super under the organization
+    default: "Coll401,Coll402"
+  CollectorEps:
+    type: String
+    description: guaranteed eps for a collector
+    default: "10000"
+  TotalCollectors:
+    type: String
+    description: total number of collectors to add to the organization
+    default: "2"
+  Mode:
+    type: String
+    description: fsiem stack mode(Service Provider or Enterprise)
+    default: "Service Provider"
+mainSteps:
+  - name: add_org_collectors_to_super
+    action: 'aws:invokeLambdaFunction'
+    inputs:
+      FunctionName: 'lambda_ssm_collectors_auto_${environment}'
+      InputPayload:
+        SerialNumber: '{{SerialNumber}}'
+        Command: 'add_org_collectors_to_super'
+        EnvId: '${environment}'
+        SuperUrl: '{{SuperUrl}}'
+        User: '{{User}}'
+        Password: '{{Password}}'
+        OrgName: '{{OrgName}}'
+        OrgUser: '{{OrgUser}}'
+        CollectorEps: '{{CollectorEps}}'
+        CollectorName: '{{CollectorName}}'
+        TotalCollectors: '{{TotalCollectors}}'
+        Mode: '{{Mode}}'
+      InvocationType: 'RequestResponse'
+  - name: provision_collectors
+    action: 'aws:invokeLambdaFunction'
+    inputs:
+      FunctionName: 'lambda_ssm_collectors_auto_${environment}'
+      InputPayload:
+        SerialNumber: '{{SerialNumber}}'
+        Command: 'provision_collectors'
+        EnvId: '${environment}'
+        SuperUrl: '{{SuperUrl}}'
+        User: '{{User}}'
+        Password: '{{Password}}'
+        OrgName: '{{OrgName}}'
+        OrgUser: '{{OrgUser}}'
+        CollectorEps: '{{CollectorEps}}'
+        CollectorName: '{{CollectorName}}'
+        TotalCollectors: '{{TotalCollectors}}'
+        Mode: '{{Mode}}'
+      InvocationType: 'RequestResponse'

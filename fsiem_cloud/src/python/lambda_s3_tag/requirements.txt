@@ -1,0 +1,1 @@
+../../fsiem_api_client --no-index

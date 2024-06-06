@@ -1,0 +1,59 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "cognito-idp:*",
+        "ecr:*",
+        "ecs:*",
+        "eks:*",
+        "events:*",
+        "secretsmanager:*",
+        "servicediscovery:*",
+        "elasticfilesystem:*",
+        "dynamodb:*",
+        "wafv2:*",
+        "backup:*",
+        "backup-storage:*",
+        "kms:*",
+        "ssm:*",
+        "ses:*"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "cognito-idp:*",
+        "cognito-sync:*"
+      ],
+      "Resource": [
+        "arn:aws:cognito-idp:*:023941436530:userpool/*",
+        "arn:aws:cognito-sync:*:023941436530:identitypool/*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": "cognito-sync:*",
+      "Resource": "arn:aws:cognito-sync:*:023941436530:identitypool/*/identity/*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "cognito-sync:*",
+      "Resource": "arn:aws:cognito-sync:*:023941436530:identitypool/*/identity/*/dataset/*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:ListBucket",
+        "s3:GetBucketVersioning"
+      ],
+      "Resource": [
+        "arn:aws:s3:::*/*"
+      ]
+    }
+  ]
+}

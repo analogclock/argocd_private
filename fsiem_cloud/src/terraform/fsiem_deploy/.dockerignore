@@ -1,0 +1,6 @@
+build.dockerfile
+docker-compose.yml
+**/.terraform/
+**/.terraform-cache/
+**/.terraform.lock.hcl
+**/.terragrunt-cache/

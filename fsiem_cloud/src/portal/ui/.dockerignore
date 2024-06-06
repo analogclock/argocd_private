@@ -1,0 +1,5 @@
+# Re-use locally cached modules, do NOT ignore this folder
+# node_modules
+
+dist
+artifacts

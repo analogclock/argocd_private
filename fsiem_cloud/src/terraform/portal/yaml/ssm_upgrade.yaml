@@ -1,0 +1,215 @@
+description: |-
+  Update the fortisiem cluster from 6.7.0 to 6.7.1
+schemaVersion: "0.3"
+assumeRole: "${assume_role}"
+parameters:
+  Workers:
+    type: StringList
+    description: The instance ids of the worker and keeper nodes
+  Supers:
+    type: StringList
+    description: The instance ids of the super nodes
+  File:
+    type: String
+    description: The name of the upgrade zip
+  SecurityGroupIdW:
+    type: String
+    description: (Required) The security group ID for Worker ALB.
+    allowedPattern: "^(sg-)([0-9a-f]){1,}$"
+  SecurityGroupIdS:
+    type: String
+    description: (Required) The security group ID for Super ALB.
+    allowedPattern: "^(sg-)([0-9a-f]){1,}$"
+  BackupDeleteAfterDays:
+    type: Integer
+    default: 7
+  SerialNumber:
+    type: String
+    description: SerialNumber or Environment ID
+    default: "FSMCLD<id>"
+  DeploymentRegion:
+    type: String
+    description: AWS Region where fsiem cloud stack is deployed for example us-east-1
+mainSteps:
+  - name: check_license
+    description: Check license is valid on every node
+    action: "aws:runCommand"
+    inputs:
+      DocumentName: AWS-RunShellScript
+      Parameters:
+        commands: |-
+          echo "Checking License"
+          /opt/phoenix/bin/phLicenseTool --verify
+      CloudWatchOutputConfig:
+        CloudWatchLogGroupName: "${ssm_log_group}"
+        CloudWatchOutputEnabled: true
+      Targets:
+        - Key: "tag:SerialNumber"
+          Values:
+            - "{{SerialNumber}}"
+  - name: install_7zip
+    description: Install 7zip
+    action: "aws:runCommand"
+    inputs:
+      DocumentName: AWS-RunShellScript
+      Parameters:
+        commands: |-
+          echo "Installing 7zip"
+          yum install p7zip p7zip-plugins -y -q
+      CloudWatchOutputConfig:
+        CloudWatchLogGroupName: "${ssm_log_group}"
+        CloudWatchOutputEnabled: true
+      Targets:
+        - Key: "tag:SerialNumber"
+          Values:
+            - "{{SerialNumber}}"
+  - name: backup_instances
+    description: Create an AMI of all workers and supers in backup vault
+    action: "aws:invokeLambdaFunction"
+    inputs:
+      FunctionName: "lambda_ssm_source_all_${environment}"
+      InputPayload:
+        Workers: "{{Workers}}"
+        Supers: "{{Supers}}"
+        BackupVaultName: "${backup_vault_name}"
+        IamRoleArn: "${backup_role}"
+        DeleteAfterDays: "{{BackupDeleteAfterDays}}"
+        SerialNumber: "{{SerialNumber}}"
+        ScriptName: "backup_instances"
+        DeploymentRegion: "{{DeploymentRegion}}"
+      InvocationType: "RequestResponse"
+  - name: InvokeFmonMaintenanceSchedule
+    description: Invoke Fortimonitor Maintenance Window
+    action: "aws:invokeLambdaFunction"
+    inputs:
+      FunctionName: "lambda_ssm_source_all_${environment}"
+      InputPayload:
+        SerialNumber: "{{SerialNumber}}"
+        ScriptName: "invoke_fmon_maintenance"
+        EnvId: "${environment}"
+        DynamodbRegion: "${region}"
+        DeploymentRegion: "{{DeploymentRegion}}"
+      InvocationType: "RequestResponse"
+  - name: DeleteAlbSgInboundRules
+    description: Delete ALB SgInboundRules from the ALB Security Group
+    action: "aws:invokeLambdaFunction"
+    inputs:
+      FunctionName: "lambda_ssm_source_all_${environment}"
+      InputPayload:
+        SecurityGroupIdW: "{{SecurityGroupIdW}}"
+        SecurityGroupIdS: "{{SecurityGroupIdS}}"
+        SerialNumber: "{{SerialNumber}}"
+        ScriptName: "delete_alb_sg_in_rules"
+        EnvId: "${environment}"
+        DynamodbRegion: "${region}"
+        DeploymentRegion: "{{DeploymentRegion}}"
+      InvocationType: "RequestResponse"
+  - name: stop_workers
+    description: Stop the workers prior to Super Upgrade
+    action: "aws:changeInstanceState"
+    inputs:
+      DesiredState: stopped
+      InstanceIds: "{{Workers}}"
+  - name: update_super
+    description: Upgrade the Super to the new version
+    action: "aws:runCommand"
+    inputs:
+      DocumentName: AWS-RunShellScript
+      Parameters:
+        commands: |-
+          echo "Upgrade for super is starting"
+          rm -rf /opt/upgrade
+          mkdir -p /opt/upgrade
+          aws s3api get-object --bucket ${bucket} --key {{File}} /opt/upgrade/{{File}}
+          7za x /opt/upgrade/{{File}} -o/opt/upgrade
+          cd /opt/upgrade/$(basename {{File}} .zip)
+          export PATH=`su - admin -c env | grep ^PATH= | cut -d''='' -f2-`
+          mkdir -p /var/log/upgrades
+          sh upgrade.sh &>> "/var/log/upgrades/$(date +"%FT%H%M%z")_fsiem_upgrade.log"
+      CloudWatchOutputConfig:
+        CloudWatchLogGroupName: "${ssm_log_group}"
+        CloudWatchOutputEnabled: true
+      Targets:
+        - Key: "tag:Role"
+          Values:
+            - "super"
+        - Key: "tag:SerialNumber"
+          Values:
+            - "{{SerialNumber}}"
+  - name: start_workers
+    description: Start the workers now the Super has been upgraded
+    action: "aws:changeInstanceState"
+    inputs:
+      DesiredState: running
+      InstanceIds: "{{Workers}}"
+  - name: wait_workers_healthy
+    description: Wait until the Workers have recovered from reboot
+    action: "aws:sleep"
+    inputs:
+      Duration: PT5M
+  - name: update_workers
+    description: Upgrade the Worker to the new version
+    action: "aws:runCommand"
+    inputs:
+      DocumentName: AWS-RunShellScript
+      Parameters:
+        commands: |-
+          echo "Upgrade for worker is starting"
+          rm -rf /opt/upgrade
+          mkdir -p /opt/upgrade
+          aws s3api get-object --bucket ${bucket} --key {{File}} /opt/upgrade/{{File}}
+          7za x /opt/upgrade/{{File}} -o/opt/upgrade
+          cd /opt/upgrade/$(basename {{File}} .zip)
+          export PATH=`su - admin -c env | grep ^PATH= | cut -d''='' -f2-`
+          mkdir -p /var/log/upgrades
+          sh upgrade.sh &>> "/var/log/upgrades/$(date +"%FT%H%M%z")_fsiem_upgrade.log"
+      CloudWatchOutputConfig:
+        CloudWatchLogGroupName: "${ssm_log_group}"
+        CloudWatchOutputEnabled: true
+      Targets:
+        - Key: "tag:Role"
+          Values:
+            - "worker"
+            - "keeper"
+        - Key: "tag:SerialNumber"
+          Values:
+            - "{{SerialNumber}}"
+  - name: wait_nodes_healthy
+    description: Wait until all nodes have recovered from their upgrades
+    action: "aws:sleep"
+    inputs:
+      Duration: PT5M
+  - name: sync_scripts_on_super
+    description: Sync all scripts on super from s3 bucket and add cronjobs
+    action: "aws:runCommand"
+    inputs:
+      DocumentName: AWS-RunShellScript
+      Parameters:
+        commands: |-
+          echo "Updating scripts from scripts bucket ${s3_scripts_bucket}"
+          aws s3 cp --recursive "s3://${s3_scripts_bucket}" --region "${s3_scripts_bucket_region}" "/home/${user}/scripts/"
+          chown -R "${user}:${user}" "/home/${user}/scripts/"
+          chmod -R 755 "/home/${user}/scripts/"
+          echo "*/5 * * * * root /home/${user}/scripts/cognito_update_keys.sh > /tmp/cognito_update_keys.log 2>&1" > /etc/cron.d/jwt-key-download
+      CloudWatchOutputConfig:
+        CloudWatchLogGroupName: "${ssm_log_group}"
+        CloudWatchOutputEnabled: true
+      Targets:
+        - Key: "tag:Role"
+          Values:
+            - "super"
+        - Key: "tag:SerialNumber"
+          Values:
+            - "{{SerialNumber}}"
+  - name: TerminateFmonMaintenanceSchedule
+    description: Invoke Fortimonitor Maintenance Window
+    action: "aws:invokeLambdaFunction"
+    inputs:
+      FunctionName: "lambda_ssm_source_all_${environment}"
+      InputPayload:
+        SerialNumber: "{{SerialNumber}}"
+        ScriptName: "terminate_fmon_maintenance"
+        EnvId: "${environment}"
+        DynamodbRegion: "${region}"
+        DeploymentRegion: "{{DeploymentRegion}}"
+      InvocationType: "RequestResponse"

@@ -1,0 +1,30 @@
+<div class="sidebar" [ngClass]="isAccountSelection ? 'users' : 'logo'">
+    <div class="portal-heading">
+        <h1>FortiSIEM Cloud</h1>
+    </div>
+    <div class="title">
+        <span *ngIf="isAccountSelection">Welcome Back!</span>
+    </div>
+    <div *ngIf="isAccountSelection" class="user">
+        <span>Username</span>
+        <span class="email">{{userId}}</span>
+    </div>
+    <div class="account-buttons">
+        <button [hidden]="!isAccountSelection" class="btn btn-active">
+            <span class="btn-text users">Users</span>
+        </button>
+        <button [hidden]="!isEntitlements" type="button" (click)="navigateEntitlements()"
+            [ngClass]="isEntitlements && !!serialNumber ? 'btn-deactive' : ''"
+            class="btn btn-active"
+            [title]="isEntitlements && !! serialNumber ? 'Click to go to all instances' : ''">
+            <span class="btn-text deployments">{{isEntitlements && !! serialNumber ? 'Back to all instances' : 'Instances'}}</span>
+        </button>
+        <button [hidden]="!(isEntitlements && !!serialNumber)" class="btn btn-active">
+            <span class="btn-text details">{{serialNumber || ''}}</span>
+        </button>
+    </div>
+    <div class="version">
+        <span>v{{version}}.</span>
+        <span id="fullversion" style="display: none;">{{fullVersion}}</span>
+    </div>
+</div>

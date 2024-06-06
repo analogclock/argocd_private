@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" validUntil="2025-04-13T11:01:46Z" cacheDuration="PT604800S" entityID="urn:amazon:cognito:sp:us-east-1_RhzCh1viR">
+  <md:SPSSODescriptor AuthnRequestsSigned="true" WantAssertionsSigned="true" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+    <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://fortisiem-playground.forticloud.com/logout" />
+    <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:unspecified</md:NameIDFormat>
+    <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://forticloud-fsiem-playground.auth.us-east-1.amazoncognito.com/saml2/idpresponse" index="1" />
+  </md:SPSSODescriptor>
+</md:EntityDescriptor>

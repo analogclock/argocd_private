@@ -1,0 +1,36 @@
+<zf-banner *ngIf="isAuthenticated"></zf-banner>
+
+<router-outlet></router-outlet>
+
+<div *ngIf="isAuthenticated" class="zf-backdrop"></div>
+
+<footer *ngIf="isAuthenticated">
+    <div class="left-footer">
+        <a href="https://www.fortinet.com/corporate/about-us/about-us.html" rel="noopener noreferrer"
+            target="_blank">Corporate</a>
+        <a href="https://www.fortinet.com/partners/partner-program/find-a-partner.html" rel="noopener noreferrer"
+            target="_blank">How to Buy</a>
+        <a href="https://www.fortinet.com/products/siem/fortisiem" rel="noopener noreferrer" target="_blank">SIEM</a>
+        <a href="https://www.fortinet.com/support-and-training/support/contact.html" rel="noopener noreferrer"
+            target="_blank">Services &amp; Support</a>
+        <a href="https://www.fortinet.com/corporate/about-us/legal.html" rel="noopener noreferrer"
+            target="_blank">Legal</a>
+        <a href="https://www.fortinet.com/corporate/about-us/privacy.html" rel="noopener noreferrer"
+            target="_blank">Privacy</a>
+        <a href="https://www.fortinet.com/corporate/about-us/legal.html" rel="noopener noreferrer" target="_blank">Terms
+            of Use</a>
+    </div>
+    <div class="right-footer">
+        <span>Copyright &copy; {{currentYear}} Fortinet, Inc. or its affiliates. All rights reserved.</span>
+        <a href="https://www.fortinet.com/blog" rel="noopener noreferrer" target="_blank"><img
+                src="assets/icons/fc-lib-FortinetIcon.svg" /></a>
+        <a href="http://www.facebook.com/fortinet" rel="noopener noreferrer" target="_blank"><img
+                src="assets/icons/fc-lib-facebook.svg" /></a>
+        <a href="http://www.twitter.com/fortinet" rel="noopener noreferrer" target="_blank"><img
+                src="assets/icons/fc-lib-twitter.svg" /></a>
+        <a href="http://www.youtube.com/user/SecureNetworks" rel="noopener noreferrer" target="_blank"><img
+                src="assets/icons/fc-lib-youtube.svg" /></a>
+        <a href="http://www.linkedin.com/company/fortinet" rel="noopener noreferrer" target="_blank"><img
+                src="assets/icons/fc-lib-Linkedin.svg" /></a>
+    </div>
+</footer>

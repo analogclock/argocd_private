@@ -1,0 +1,148 @@
+@import "variables-no-compile";
+@import "colours-no-compile";
+
+$sidebar-width: 300px;
+
+:host {
+    z-index: 0;
+}
+
+.sidebar {
+    .portal-heading {
+        position: fixed;
+        top: 50px;
+        left: 28px;
+
+        h1 {
+            font-size: 15px;
+            font-weight: 300;
+            letter-spacing: 0.25em;
+            color: rgba(255 255 255 / 85%);
+            text-transform: uppercase;
+            padding: 35px 10px 5px 25px;
+            text-shadow: 2px 2px 1px rgb(0 0 0 / 10%);
+            margin-bottom: 0;
+        }
+    }
+
+    .title {
+        color: #F7BB05;
+        font-size: 27px;
+        margin-bottom: 0;
+        margin-top: 40px;
+    }
+
+    .user {
+        margin-top: 40px;
+
+        span.email {
+            margin-left: 10px;
+            color: $colour-white;
+        }
+    }
+
+    .version {
+        font-size: 10px;
+        color: rgba(255 255 255 / 85%);
+        position: fixed;
+        bottom: 42px;
+        width: $sidebar-width;
+        height: 30px;
+        left: 0;
+        text-align: center;
+    }
+
+    .account-buttons {
+        margin-top: 30px;
+        z-index: 10;
+
+        .btn-active {
+            padding: 12px 20px 12px 45px;
+            font-size: 14px !important;
+            margin-bottom: 20px;
+            font-weight: 400 !important;
+            letter-spacing: 0.025em;
+            width: 240px;
+            text-align: left;
+            position: relative;
+            cursor: pointer;
+            color: #505050 !important;
+            background: white;
+            border-color: white !important;
+            box-shadow: 2px -3px 6px rgb(0 0 0 / 15%);
+            border-radius: 5px;
+
+            &:not(.btn-deactive)::before {
+                border: 8px solid transparent;
+                border-right-color: #EFF1FA;
+                width: 0;
+                height: 0;
+                content: "";
+                display: inline-block;
+                position: absolute;
+                right: -31px;
+                top: 11px;
+            }
+
+            &:not(.btn-deactive)::after {
+                content: "\2192";
+                display: inline-block;
+                position: absolute;
+                right: 12px;
+                top: 10px;
+                font-family: fontello, sans-serif;
+                font-size: 23px;
+                color: #39A1FF;
+                text-shadow: 1px 0 #39A1FF;
+                letter-spacing: 1px;
+                font-weight: 900;
+            }
+        }
+
+        .btn-text::before {
+            font-size: 22px;
+            display: inline-block;
+            position: absolute;
+            left: 14px;
+            top: 12px;
+            font-family: fontello, sans-serif;
+            opacity: 0.7;
+        }
+
+        .btn-text.users::before {
+            content: "\2709";
+        }
+
+        .btn-text.deployments::before {
+            content: "\2261";
+        }
+
+        .btn-text.details::before {
+            content: "\2607";
+            transform: rotate(-45deg);
+        }
+    }
+
+    &.users {
+        background-image: url("/assets/backgrounds/account-selection-image.svg");
+        background-position: top 50px left 25px;
+        background-color: #005DFD;
+    }
+
+    &.logo {
+        background-image: url("/assets/logos/icon-library-fortisiem-cloud_white.svg");
+        background-position: top 60px left 25px;
+        background-color: #003D96;
+    }
+
+    width: $sidebar-width;
+    font-weight: 500;
+    color: #39A1FF;
+    line-height: 100%;
+    padding: 40vh 30px 0;
+    background-repeat: no-repeat;
+    background-size: 246px 320px;
+    letter-spacing: 0.025em;
+    height: calc(100vh - $height-before-content);
+    display: block;
+}

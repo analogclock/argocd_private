@@ -1,0 +1,31 @@
+body {
+    font-family: $font-regular;
+    font-size: $font-size-default;
+    line-height: 1.5;
+    color: $colour-grey-deep;
+
+    * {
+        font-family: inherit;
+        line-height: inherit;
+    }
+}
+
+h1 {
+    font-size: 28px;
+}
+
+h2 {
+    font-size: 21px;
+}
+
+h3 {
+    font-size: 17px;
+}
+
+h4 {
+    font-size: 15px;
+}
+
+strong {
+    font-family: Lato-Bold, sans-serif;
+}

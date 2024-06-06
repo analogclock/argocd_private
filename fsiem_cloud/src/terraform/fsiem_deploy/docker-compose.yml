@@ -1,0 +1,39 @@
+version: "3.9"
+# Manually create default network to avoid issues with FortiClient VPN.
+# From: https://stackoverflow.com/a/50948930/706456
+networks:
+  default:
+    ipam:
+      config:
+      - subnet: 172.16.235.0/24
+        gateway: 172.16.235.1
+services:
+  fsiem-deploy:
+    platform: linux/amd64
+    build:
+      context: ./
+      dockerfile: build.dockerfile
+      args:
+        DOCKER_REGISTRY: ${DOCKER_REGISTRY_NEXUS_URL}
+        DOCKER_UBUNTU_VERSION: ${DOCKER_UBUNTU_VERSION}
+        NEXUS_APT_PROXY: ${NEXUS_APT_PROXY:-http://archive.ubuntu.com/ubuntu/}
+        NEXUS_APT_SECURITY_PROXY: ${NEXUS_APT_SECURITY_PROXY:-http://security.ubuntu.com/ubuntu/}
+        NEXUS_AWS_PROXY: ${NEXUS_AWS_PROXY:-https://awscli.amazonaws.com}
+        NEXUS_HASHICORP_PROXY: ${NEXUS_HASHICORP_PROXY:-https://releases.hashicorp.com}
+        NEXUS_GITHUB_PROXY: ${NEXUS_GITHUB_PROXY:-https://github.com}
+        BUILD_HTTP_PROXY: ${BUILD_HTTP_PROXY:-}
+        NEXUS_TERRAFORM_PROXY: ${NEXUS_TERRAFORM_PROXY:-}
+    volumes:
+      - ~/.aws/:/root/.aws/
+    image: ${CONTAINER_IMAGE_NAME:-fsiem-deploy}
+    container_name: fsiem-deploy
+    entrypoint: "/bin/sh"
+    environment:
+      - AWS_REGION=eu-west-1
+      - DEPLOYMENT_NAME=test2
+      # deployment action can be
+      #   - "apply" to create a new FSIEM deployment
+      #   - "destroy" to terminate deployment and delete resources
+      - DEPLOYMENT_ACTION=apply
+      # we can also update an existing deployment: true/false
+      - UPDATING_DEPLOYMENT=false

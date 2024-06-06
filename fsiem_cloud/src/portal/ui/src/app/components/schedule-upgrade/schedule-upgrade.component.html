@@ -1,0 +1,17 @@
+<div class="schedule-in-line">
+    <input #updateSelect type="date" [ngModel]="day" (ngModelChange)="updateScheduledDate($event)" name="scheduleUpdate"
+        min="{{minUpdateDate | date:'yyyy-MM-dd':'UTC'}}" max="{{maxUpdateDate | date:'yyyy-MM-dd':'UTC'}}"
+        placeholder="Select date for upgrade" />
+    <zf-dropdown [elements]="hours" inputId="schedule-upgrade-time" (selectElement)="updateTime($event)" [value]="hour"
+        placeholder="Select time">
+        <ng-template #zfDropdownElementTemplate let-time>
+            <span>{{ time }}</span>
+        </ng-template>
+    </zf-dropdown>
+    <zf-dropdown [elements]="offsets" inputId="schedule-upgrade-timezone" (selectElement)="updateTimeZone($event)"
+        [value]="offset" placeholder="Select offset">
+        <ng-template #zfDropdownElementTemplate let-zone>
+            <span>{{ zone }}</span>
+        </ng-template>
+    </zf-dropdown>
+</div>

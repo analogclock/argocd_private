@@ -1,0 +1,185 @@
+.main {
+    width: 100%;
+    margin: auto;
+    background-color: white;
+}
+
+.main-content {
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 25% 75%;
+}
+
+.login-section {
+    background-color: #FFFFFF;
+    max-width: 400px;
+    margin: 0 auto;
+    position: relative;
+    width: 100%;
+
+    .header {
+        height: 10vh;
+        line-height: 10vh;
+        padding-left: 10px;
+
+        .logo {
+            svg {
+                max-width: 100%;
+                vertical-align: middle;
+                border: 0;
+                height: 30px;
+                width: 180px;
+            }
+        }
+    }
+
+    .details {
+        height: 70vh;
+        margin: 10vh auto auto;
+
+        .logo {
+            width: 100%;
+            text-align: center;
+
+            img {
+                max-width: 100%;
+                vertical-align: middle;
+                border: 0;
+                height: 120px;
+                width: 100%;
+            }
+
+            .text {
+                font-size: 2rem;
+                font-weight: bold;
+                margin-bottom: 30px;
+                color: #000000;
+            }
+        }
+
+        .login-buttons {
+            display: grid;
+            grid-template-columns: 100%;
+            text-align: center;
+            margin: 0;
+            margin-top: 20px;
+
+            button {
+                width: 80%;
+                height: 40px;
+                margin: 5px auto;
+                border-radius: 0;
+                font-size: 1rem;
+                padding: 0;
+
+                &.login {
+                    border: none;
+                    background-color: #0071CE;
+                    color: #FFFFFF;
+                }
+
+                &.register {
+                    border: 1px solid #0071CE;
+                    background-color: #FFFFFF;
+                    color: #0071CE;
+                }
+
+                .text {
+                    text-transform: uppercase;
+                    font-weight: 600;
+                    font-size: 12px;
+                }
+            }
+        }
+
+        .description {
+            width: 100%;
+            text-align: left;
+            padding: 0 40px;
+
+            p {
+                line-height: 25px;
+                font-size: 14px;
+                color: #727272;
+            }
+        }
+    }
+
+    .footer {
+        height: 10vh;
+        line-height: 10vh;
+        padding-left: 10px;
+    }
+}
+
+.splash-content {
+    background-image: url("/assets/backgrounds/fortisiem-cloud-bg.jpg");
+    background-position: center 0;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100vh;
+    width: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .copyright {
+        width: 95%;
+        position: absolute;
+        bottom: 50px;
+        z-index: 2;
+        text-align: right;
+        color: #FFFFFF;
+
+        span:not(:first-of-type) {
+            margin-left: 10px;
+        }
+
+        a {
+            color: #FFFFFF;
+        }
+    }
+
+    .details {
+        margin: 0;
+        color: #FFFFFF;
+        margin-left: 135px;
+
+        .big {
+            font-size: 50px;
+            font-weight: bold;
+            line-height: 70px;
+            color: #FFFFFF;
+        }
+
+        .small {
+            font-size: 20px;
+            color: #FFFFFF;
+            margin: 30px 0 0;
+            font-weight: 600;
+            line-height: normal;
+        }
+
+        .middle {
+            background: rgb(0 0 0 / 40%);
+            width: 350px;
+            margin-top: 30px;
+            font-weight: 600;
+        }
+
+        .normal {
+            border-top: 1px solid rgb(255 255 255 / 50%);
+            text-align: left;
+            padding: 7px 0;
+
+            span {
+                display: block;
+                position: relative;
+                height: 40px;
+                line-height: 40px;
+                margin-left: 30px;
+            }
+        }
+    }
+}

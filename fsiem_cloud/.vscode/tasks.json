@@ -1,0 +1,113 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build FSIEM Cloud",
+      "type": "shell",
+      "command": "./build/ci-wrapper.sh",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "revealProblems": "onProblem"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Deploy FSIEM Cloud",
+      "type": "shell",
+      "command": "./build/ci-wrapper.sh deploy",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "revealProblems": "onProblem"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "build:fsiem-cloud-api",
+      "command": "dotnet",
+      "type": "process",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "revealProblems": "onProblem"
+      },
+      "args": [
+        "build",
+        "${workspaceFolder}/src/portal/api/infrastructure-provisioning.sln",
+        "/property:GenerateFullPaths=true"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "format:fsiem-cloud-api",
+      "command": "dotnet",
+      "type": "process",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "revealProblems": "onProblem"
+      },
+      "args": [
+        "format",
+        "--severity",
+        "warn",
+        "--verify-no-changes",
+        "--verbosity",
+        "diagnostic"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/src/portal/api/"
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "publish:fsiem-cloud-api",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "publish",
+        "${workspaceFolder}/src/portal/api/src/apps/FinsProvisioning/FinsProvisioning.csproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "watch:fsiem-cloud-api",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "watch",
+        "run",
+        "--project",
+        "${workspaceFolder}/src/portal/api/src/apps/FinsProvisioning/FinsProvisioning.csproj"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "type": "npm",
+      "script": "build",
+      "path": "src/portal/ui",
+      "group": "build",
+      "problemMatcher": [],
+      "label": "npm: build - src/portal/ui",
+      "detail": "ng build"
+    },
+    {
+      "type": "npm",
+      "script": "playground",
+      "path": "src/portal/ui",
+      "group": "build",
+      "isBackground": true,
+      "label": "npm: run dev",
+      "detail": "npm run dev"
+    }
+  ]
+}

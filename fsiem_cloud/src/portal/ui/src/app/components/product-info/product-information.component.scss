@@ -1,0 +1,69 @@
+@use "sass:math";
+@import "breakpoints-no-compile";
+@import "variables-no-compile";
+@import "colours-no-compile";
+
+:host {
+    display: block;
+    padding: 40px 0;
+    background-color: #003E51;
+    background-image: url("/assets/backgrounds/faz-bg.svg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    & > div {
+        position: relative;
+        height: 100%;
+        padding: $padding-forti-one;
+        color: $colour-white;
+
+        & > div {
+            title {
+                display: block;
+                font-family: $font-bold;
+                font-size: 375%;
+            }
+
+            .sub-text {
+                font-size: 180%;
+            }
+
+            p {
+                font-size: $font-size-large;
+
+                a {
+                    color: $colour-white;
+                }
+            }
+
+            &:last-child {
+                display: none;
+            }
+        }
+
+        @include media-breakpoint-up(md) {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+
+            & > div {
+                &:first-child {
+                    width: 40vw;
+                }
+
+                &:last-child {
+                    display: block;
+                    width: 30vw;
+                }
+
+                img {
+                    display: inline;
+                    margin-left: 7vw;
+                    filter: brightness(0) invert(1);
+                }
+            }
+        }
+    }
+}

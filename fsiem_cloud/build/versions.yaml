@@ -1,0 +1,14 @@
+# This yaml file contains software versions used by the build process
+versions:
+  # Build tools
+  terraform:       "1.5.7"
+  terragrunt:      "v0.56.2"
+  docker_compose:  "v2.26.1"
+  tfsec:           "v1.28.5"
+  aws_cli:         "2.15.35"
+
+  # Docker containers
+  docker_ubuntu_version: "22.04"
+  docker_dotnet_version: "8.0.203-alpine3.19"
+  docker_node_version:   "21-alpine3.19"
+  docker_python_version: "3.11-alpine3.19"

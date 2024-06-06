@@ -1,0 +1,3 @@
+../fsiem_api_client --no-index
+boto3==1.24.37
+python-dateutil==2.8.2

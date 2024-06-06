@@ -1,0 +1,29 @@
+{
+    "plugins": [
+        "stylelint-scss"
+    ],
+    "extends": "stylelint-config-standard-scss",
+    "rules": {
+        "at-rule-empty-line-before": null,
+        "at-rule-no-unknown": null,
+        "scss/at-rule-no-unknown": [
+            true,
+            {
+                "ignoreAtRules": [ "use" ]
+            }
+        ],
+        "color-hex-length": "long",
+        "no-descending-specificity": [
+            true,
+            {
+                "ignore": [ "selectors-within-list" ]
+            }
+        ],
+        "selector-pseudo-element-no-unknown": [
+            true,
+            {
+                "ignorePseudoElements": [ "ng-deep" ]
+            }
+        ]
+    }
+}

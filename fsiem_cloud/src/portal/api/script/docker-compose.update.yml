@@ -1,0 +1,14 @@
+version: "3.9"
+services:
+  # We can only use mounted volumes at the top level of contaner, we cannot mount a volume
+  # when using docker-in-a-docker. Because our build action runs using
+  # "gitlab ci container > build container > api container", the last "api container"
+  # cannot mount file system from the "build container". This is why update action runs
+  # like this: "gitlab ci container > api update container", where we can mount volume
+  # with our source code.
+  portal_api_build:
+    volumes:
+      - ./:/root/portal_api
+    working_dir: /root/portal_api
+    environment:
+      - DOTNET_HOST_PATH=dotnet

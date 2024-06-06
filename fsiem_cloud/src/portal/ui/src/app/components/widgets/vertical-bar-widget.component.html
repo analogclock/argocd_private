@@ -1,0 +1,20 @@
+<div class="time-select">
+    <zf-dropdown *ngIf="days.length > 0" [maxHeight]="190" [elements]="days" inputId="schedule-upgrade-time" (selectElement)="updateDay($event)" [value]="day" placeholder="Select time">
+        <ng-template #zfDropdownElementTemplate let-time>
+            <span>{{ time }}</span>
+        </ng-template>
+    </zf-dropdown>
+</div>
+<div #chartContainer class="chart-container">
+    <ngx-charts-bar-vertical-stacked
+        [view]="[(chartContainer.offsetWidth - 5), (chartContainer.offsetHeight - 37)]"
+        [animations]="false"
+        [xAxisTickFormatting]="fmtDate" [rotateXAxisTicks]="false" [yAxisTickFormatting]="formatDiskSize"
+        [roundDomains]="true" [xAxis]="true" [yAxis]="true" [legend]="true" [legendPosition]="LegendPosition.Below"
+        [legendTitle]="''" [results]="filterData">
+        <ng-template #tooltipTemplate let-model="model">
+            <div>{{model.series | date:'yyyy-MM-dd':'UTC'}} (UTC)</div>
+            <div>{{model.value | diskSize:2}}</div>
+        </ng-template>
+    </ngx-charts-bar-vertical-stacked>
+</div>
