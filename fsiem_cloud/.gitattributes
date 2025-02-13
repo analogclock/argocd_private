@@ -1,7 +1,0 @@
-# forcibly make all shell scripts eol as lf
-# on windows this is an irritation
-# if you have checked out before to sort all the files
-# go to the root of the repo and run the following
-# `git rm --cached -r .`
-# `git reset --hard`
-*.sh    eol=lf

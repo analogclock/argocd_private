@@ -1,3 +1,0 @@
-boto3==1.24.37
-requests==2.31.0
-../fsiem_api_client --no-index

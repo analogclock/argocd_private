@@ -1,9 +1,0 @@
-#
-# This file contain vars and locals that we want to override in parent terragrunt.hcl.
-#
-
-tg_remote_state:
-  # Env-specific state file location in S3
-  s3_region: "us-east-1"
-  s3_bucket: "fsiem-terraform-ftn"
-
